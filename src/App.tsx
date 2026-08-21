@@ -45,7 +45,7 @@ export default function App() {
       className="flex flex-col lg:flex-row h-screen w-full overflow-hidden"
       style={{ fontFamily: "var(--font-body)", background: "#0f1629" }}
     >
-      {/* Sidebar Desktop (Tampil pada layar lg) */}
+      {/* Sidebar Desktop */}
       <aside
         className="hidden lg:flex flex-col w-64 .flex-shrink-0 {
  flex-shrink: 0;
@@ -55,7 +55,7 @@ export default function App() {
           borderColor: "#162035",
         }}
       >
-        {/* Logo */}
+        {/* Logo Gambar Otak Siber */}
         <div className="px-5 py-5 border-b flex items-center justify-center" style={{ borderColor: "#162035" }}>
           <img 
             src={logoImg} 
@@ -115,7 +115,7 @@ export default function App() {
           })}
         </nav>
 
-        {/* Sidebar Bottom (Settings & User Profile) */}
+        {/* Sidebar Bottom */}
         <div className="px-3 pb-4 space-y-1 border-t pt-3" style={{ borderColor: "#162035" }}>
           <button
             type="button"
@@ -221,7 +221,6 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-2 lg:gap-4">
-            {/* Streak */}
             <div
               className="flex items-center gap-1.5 lg:gap-2 px-2.5 lg:px-3 py-1 lg:py-1.5 rounded-lg"
               style={{ background: "#162035" }}
@@ -232,7 +231,6 @@ export default function App() {
               </span>
             </div>
 
-            {/* Overall Score */}
             <div
               className="flex items-center gap-1.5 lg:gap-2 px-2.5 lg:px-3 py-1 lg:py-1.5 rounded-lg"
               style={{ background: "#162035" }}
@@ -249,7 +247,6 @@ export default function App() {
               </span>
             </div>
 
-            {/* Notification bell */}
             <button
               type="button"
               aria-label="Notifications"

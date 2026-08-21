@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import logoImg from "../assets/logo.png";
 
 interface LoginProps {
   onLogin: () => void;
@@ -69,39 +70,13 @@ export default function Login({ onLogin }: LoginProps) {
         />
 
         <div className="relative flex flex-col h-full px-12 py-10">
-          {/* Logo */}
+          {/* Logo Resmi */}
           <div className="flex items-center gap-3">
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center .flex-shrink-0 {
- flex-shrink: 0;
-} transition-colors hover:bg-blue-600"
-              style={{ background: "#3b82f6" }}
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <path
-                  d="M10 1.5L17.5 5V10C17.5 14.5 14 18 10 18.5C6 18 2.5 14.5 2.5 10V5L10 1.5Z"
-                  fill="white"
-                  fillOpacity="0.15"
-                  stroke="white"
-                  strokeWidth="1.5"
-                />
-                <path
-                  d="M7 10L9 12L13 8"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <div>
-              <span
-                className="text-base font-bold text-white"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                Digital Decision Lab
-              </span>
-            </div>
+            <img
+              src={logoImg}
+              alt="Digital Decision Lab Logo"
+              className="h-10 w-auto object-contain"
+            />
           </div>
 
           {/* Main copy */}
@@ -198,26 +173,12 @@ export default function Login({ onLogin }: LoginProps) {
         style={{ background: "#0a1322" }}
       >
         {/* Mobile logo */}
-        <div className="lg:hidden flex items-center gap-3 mb-8">
-          <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center .flex-shrink-0 {
- flex-shrink: 0;
-}"
-            style={{ background: "#3b82f6" }}
-          >
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-              <path
-                d="M10 1.5L17.5 5V10C17.5 14.5 14 18 10 18.5C6 18 2.5 14.5 2.5 10V5L10 1.5Z"
-                stroke="white"
-                strokeWidth="1.5"
-                fill="none"
-              />
-              <path d="M7 10L9 12L13 8" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-          <span className="text-sm font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
-            Digital Decision Lab
-          </span>
+        <div className="lg:hidden flex items-center justify-center mb-8">
+          <img
+            src={logoImg}
+            alt="Digital Decision Lab Logo"
+            className="h-10 w-auto object-contain"
+          />
         </div>
 
         <div className="w-full max-w-sm">
