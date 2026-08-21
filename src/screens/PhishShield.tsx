@@ -1,0 +1,465 @@
+import React, { useState } from "react";
+
+interface AnalysisResult {
+  riskLevel: "high" | "medium" | "low";
+  riskScore: number;
+  triggers: string[];
+  explanation: string;
+  primaryTrigger: "Urgency" | "Fear" | "Authority" | "Greed" | "Trust" | "Safe";
+}
+
+function analyzeText(text: string): AnalysisResult {
+  const lower = text.toLowerCase();
+  const triggers: string[] = [];
+  let riskScore = 0;
+
+  const urgencyWords = ["urgent", "immediately", "now", "asap", "hurry", "quick", "right away", "deadline", "expires", "within", "segera", "sekarang", "batas waktu"];
+  const fearWords = ["suspended", "blocked", "closed", "unauthorized", "compromised", "breach", "hacked", "violation", "penalty", "diblokir", "diretas", "sanksi", "pidana", "pembekuan"];
+  const greedWords = ["won", "winner", "prize", "free", "gift", "reward", "congratulations", "selected", "lucky", "hadiah", "gratis", "menang", "voucher", "cashback", "klaim"];
+  const authorityWords = ["bank", "government", "police", "irs", "microsoft", "apple", "amazon", "official", "ceo", "manager", "it department", "bri", "bca", "mandiri", "bni", "pajak", "polri", "kurir"];
+  
+  const linkPatterns = /http[s]?:\/\/[^\s]+/g;
+  const apkPattern = /\.apk(\?|\s|$)/i;
+  const suspiciousLinks = text.match(linkPatterns);
+
+  if (urgencyWords.some((w) => lower.includes(w))) {
+    triggers.push("Creates urgency or time pressure (Tekanan Waktu)");
+    riskScore += 25;
+  }
+  if (fearWords.some((w) => lower.includes(w))) {
+    triggers.push("Uses fear of loss or consequences (Rasa Takut)");
+    riskScore += 25;
+  }
+  if (greedWords.some((w) => lower.includes(w))) {
+    triggers.push("Offers unexpected reward or prize (Iming-iming Hadiah/Greed)");
+    riskScore += 25;
+  }
+  if (authorityWords.some((w) => lower.includes(w))) {
+    triggers.push("Impersonates authority or trusted brand (Pencatutan Otoritas)");
+    riskScore += 15;
+  }
+  if (suspiciousLinks) {
+    triggers.push("Contains external link requiring action (Tautan Eksternal)");
+    riskScore += 20;
+  }
+  if (apkPattern.test(lower)) {
+    triggers.push("Contains risky Android Package executable file (.APK Malware)");
+    riskScore += 40;
+  }
+  if (lower.includes("password") || lower.includes("transfer") || lower.includes("send") || lower.includes("otp") || lower.includes("pin")) {
+    triggers.push("Requests sensitive credential action or fund transfer");
+    riskScore += 20;
+  }
+  if (lower.includes("verify") || lower.includes("confirm") || lower.includes("click") || lower.includes("klik")) {
+    triggers.push("Requests immediate action via link or button");
+    riskScore += 15;
+  }
+
+  riskScore = Math.min(riskScore, 100);
+
+  const riskLevel: "high" | "medium" | "low" =
+    riskScore >= 60 ? "high" : riskScore >= 25 ? "medium" : "low";
+
+  const primaryTrigger: "Urgency" | "Fear" | "Authority" | "Greed" | "Trust" | "Safe" =
+    urgencyWords.some((w) => lower.includes(w))
+      ? "Urgency"
+      : fearWords.some((w) => lower.includes(w))
+      ? "Fear"
+      : greedWords.some((w) => lower.includes(w))
+      ? "Greed"
+      : authorityWords.some((w) => lower.includes(w))
+      ? "Authority"
+      : riskLevel === "low"
+      ? "Safe"
+      : "Trust";
+
+  const explanations: Record<string, string> = {
+    high: "Tingkat Bahaya Tinggi: Pesan ini menunjukkan indikasi kuat manipulasi psikologis siber. Pesan ini dirancang untuk memicu reaksi emosional agar Anda langsung bertindak tanpa berpikir panjang. Jangan klik tautan atau mengunduh file apapun.",
+    medium: "Tingkat Waspada: Pesan ini memiliki beberapa karakteristik bahasa persuasif atau tautan eksternal mencurigakan. Lakukan verifikasi secara terpisah melalui saluran resmi sebelum bertindak.",
+    low: "Tingkat Aman: Tidak terdeteksi pemicu manipulasi siber yang berbahaya secara langsung. Namun tetap berhati-hati dan selalu periksa alamat pengirim pesan.",
+  };
+
+  return {
+    riskLevel,
+    riskScore,
+    triggers,
+    explanation: explanations[riskLevel],
+    primaryTrigger,
+  };
+}
+
+const exampleMessages = [
+  "URGENT: Akun BRI Anda dibekukan! Silakan verifikasi ulang melalui tautan berikut: http://bri-restore-account.xyz",
+  "Selamat! Anda terpilih memenangkan saldo e-wallet Rp2.500.000! Klaim voucher gratis di http://hadiah-kupon.win/claim",
+  "SURAT UNDANGAN PERNIKAHAN.apk - Mohon hadir dan cek detail lokasi pada file APK terlampir.",
+];
+
+export default function PhishShield() {
+  const [input, setInput] = useState("");
+  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+
+  function handleAnalyze() {
+    if (!input.trim()) return;
+    setAnalyzing(true);
+    setResult(null);
+    setTimeout(() => {
+      setResult(analyzeText(input));
+      setAnalyzing(false);
+    }, 1000);
+  }
+
+  const riskConfig = {
+    high: {
+      label: "HIGH RISK (BAHAYA)",
+      color: "#ef4444",
+      bg: "rgba(239,68,68,0.08)",
+      border: "rgba(239,68,68,0.3)",
+      meterColor: "#ef4444",
+      icon: "🚨",
+      tagBg: "rgba(239,68,68,0.12)",
+    },
+    medium: {
+      label: "MEDIUM RISK (WASPADA)",
+      color: "#f59e0b",
+      bg: "rgba(245,158,11,0.08)",
+      border: "rgba(245,158,11,0.3)",
+      meterColor: "#f59e0b",
+      icon: "⚠️",
+      tagBg: "rgba(245,158,11,0.12)",
+    },
+    low: {
+      label: "LOW RISK (AMAN)",
+      color: "#22c55e",
+      bg: "rgba(34,197,94,0.08)",
+      border: "rgba(34,197,94,0.3)",
+      meterColor: "#22c55e",
+      icon: "✅",
+      tagBg: "rgba(34,197,94,0.12)",
+    },
+  };
+
+  return (
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6">
+      {/* Header */}
+      <div
+        className="rounded-2xl p-5 sm:p-8"
+        style={{ background: "#060d1f", border: "1px solid #162035" }}
+      >
+        <h2
+          className="text-xl sm:text-2xl font-bold text-white mb-2"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          Check Before You Trust
+        </h2>
+        <p className="text-xs sm:text-sm" style={{ color: "#7b90ad" }}>
+          Paste a suspicious message or link and understand the emotional manipulation techniques being used.
+        </p>
+
+        {/* Input */}
+        <div className="mt-6">
+          <label htmlFor="phishshield-input" className="sr-only">Suspicious message input</label>
+          <textarea
+            id="phishshield-input"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Paste a suspicious message, email, or link here..."
+            rows={4}
+            className="w-full rounded-xl px-4 py-3 text-sm resize-none outline-none transition-all focus:border-blue-500"
+            style={{
+              background: "#0f1629",
+              border: "1px solid #1e2d47",
+              color: "#e2e8f0",
+              fontFamily: "var(--font-body)",
+            }}
+          />
+        </div>
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-3">
+          <div className="flex gap-2 flex-wrap">
+            {exampleMessages.map((msg, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setInput(msg)}
+                className="text-xs px-3 py-1.5 rounded-lg transition-colors hover:bg-[#1f2e4a]"
+                style={{
+                  background: "#162035",
+                  color: "#7b90ad",
+                  border: "1px solid #1e2d47",
+                }}
+              >
+                Example {i + 1}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={handleAnalyze}
+            disabled={!input.trim() || analyzing}
+            className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition-all flex items-center justify-center gap-2 hover:bg-blue-600"
+            style={{
+              background: input.trim() ? "#1d4ed8" : "#1e2d47",
+              color: input.trim() ? "white" : "#526380",
+              cursor: input.trim() ? "pointer" : "default",
+            }}
+          >
+            {analyzing ? (
+              <>
+                <div
+                  className="w-4 h-4 rounded-full border-2 border-t-transparent animate-spin"
+                  style={{ borderColor: "#60a5fa", borderTopColor: "transparent" }}
+                />
+                Analyzing...
+              </>
+            ) : (
+              "Analyze Message →"
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Result */}
+      {result && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Risk summary */}
+          <div className="lg:col-span-4 space-y-4">
+            {/* Risk level */}
+            <div
+              className="rounded-2xl p-6 text-center"
+              style={{
+                background: riskConfig[result.riskLevel].bg,
+                border: `1px solid ${riskConfig[result.riskLevel].border}`,
+              }}
+            >
+              <div className="text-4xl mb-3">{riskConfig[result.riskLevel].icon}</div>
+              <div
+                className="text-xs font-bold tracking-widest mb-1"
+                style={{
+                  color: riskConfig[result.riskLevel].color,
+                  fontFamily: "var(--font-mono)",
+                }}
+              >
+                {riskConfig[result.riskLevel].label}
+              </div>
+              <div
+                className="text-5xl font-black mb-1"
+                style={{
+                  color: riskConfig[result.riskLevel].color,
+                  fontFamily: "var(--font-display)",
+                }}
+              >
+                {result.riskScore}
+              </div>
+              <div className="text-xs" style={{ color: "#526380" }}>
+                out of 100 Risk Score
+              </div>
+
+              {/* Meter */}
+              <div
+                className="mt-4 h-3 rounded-full overflow-hidden"
+                style={{ background: "#162035" }}
+              >
+                <div
+                  className="h-full rounded-full transition-all duration-1000"
+                  style={{
+                    width: `${result.riskScore}%`,
+                    background: `linear-gradient(90deg, #22c55e, ${result.riskScore > 50 ? "#ef4444" : "#f59e0b"})`,
+                  }}
+                />
+              </div>
+              <div className="flex justify-between mt-1 text-xs">
+                <span style={{ color: "#22c55e" }}>Safe</span>
+                <span style={{ color: "#ef4444" }}>Danger</span>
+              </div>
+            </div>
+
+            {/* Primary trigger */}
+            <div
+              className="rounded-2xl p-5"
+              style={{ background: "#060d1f", border: "1px solid #162035" }}
+            >
+              <h4
+                className="text-xs font-bold text-white mb-3"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                Primary Manipulation Trigger
+              </h4>
+              <div
+                className="flex items-center gap-2 px-3 py-2 rounded-lg"
+                style={{
+                  background: riskConfig[result.riskLevel].tagBg,
+                  border: `1px solid ${riskConfig[result.riskLevel].border}`,
+                }}
+              >
+                <div
+                  className="w-2 h-2 rounded-full .flex-shrink-0 {
+ flex-shrink: 0;
+}"
+                  style={{ background: riskConfig[result.riskLevel].color }}
+                />
+                <span
+                  className="text-sm font-bold"
+                  style={{ color: riskConfig[result.riskLevel].color }}
+                >
+                  {result.primaryTrigger}
+                </span>
+              </div>
+              <p className="text-xs mt-3 leading-relaxed" style={{ color: "#7b90ad" }}>
+                This message primarily exploits your <strong style={{ color: "#94a3b8" }}>{result.primaryTrigger.toLowerCase()}</strong> response to influence your decision.
+              </p>
+            </div>
+          </div>
+
+          {/* Detailed findings */}
+          <div className="lg:col-span-8 space-y-4">
+            {/* Explanation */}
+            <div
+              className="rounded-2xl p-5 sm:p-6"
+              style={{ background: "#060d1f", border: "1px solid #162035" }}
+            >
+              <h3
+                className="text-sm font-bold text-white mb-3"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                What's happening in this message
+              </h3>
+              <p className="text-sm leading-relaxed" style={{ color: "#94a3b8" }}>
+                {result.explanation}
+              </p>
+            </div>
+
+            {/* Warning signs */}
+            <div
+              className="rounded-2xl p-5 sm:p-6"
+              style={{ background: "#060d1f", border: "1px solid #162035" }}
+            >
+              <h3
+                className="text-sm font-bold text-white mb-4"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                Detected Warning Signs
+              </h3>
+              {result.triggers.length === 0 ? (
+                <div
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl"
+                  style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)" }}
+                >
+                  <span role="img" aria-label="safe">✅</span>
+                  <span className="text-sm" style={{ color: "#86efac" }}>
+                    No manipulation triggers detected
+                  </span>
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  {result.triggers.map((trigger, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl"
+                      style={{
+                        background: "rgba(239,68,68,0.06)",
+                        border: "1px solid rgba(239,68,68,0.15)",
+                      }}
+                    >
+                      <div
+                        className="w-5 h-5 rounded-full flex items-center justify-center .flex-shrink-0 {
+ flex-shrink: 0;
+} text-xs font-bold"
+                        style={{ background: "rgba(239,68,68,0.2)", color: "#ef4444" }}
+                      >
+                        !
+                      </div>
+                      <span className="text-sm" style={{ color: "#fca5a5" }}>
+                        {trigger}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Advice */}
+            <div
+              className="rounded-2xl p-5 sm:p-6"
+              style={{ background: "#060d1f", border: "1px solid #162035" }}
+            >
+              <h3
+                className="text-sm font-bold text-white mb-4"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                What should you do?
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {[
+                  { icon: "🛑", title: "Don't act immediately", desc: "Take at least 5 minutes before responding to any urgent request." },
+                  { icon: "📞", title: "Verify independently", desc: "Contact the sender through a known, official channel — not the one in the message." },
+                  { icon: "🗑", title: "Report and delete", desc: "Report phishing messages to your IT team or the relevant platform." },
+                ].map((a) => (
+                  <div
+                    key={a.title}
+                    className="p-4 rounded-xl"
+                    style={{ background: "#0f1629", border: "1px solid #162035" }}
+                  >
+                    <div className="text-xl mb-2">{a.icon}</div>
+                    <div
+                      className="text-xs font-semibold text-white mb-1"
+                      style={{ fontFamily: "var(--font-display)" }}
+                    >
+                      {a.title}
+                    </div>
+                    <div className="text-xs" style={{ color: "#7b90ad" }}>
+                      {a.desc}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!result && !analyzing && (
+        <div
+          className="rounded-2xl p-8 sm:p-12 text-center"
+          style={{ background: "#060d1f", border: "1px solid #162035" }}
+        >
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+            style={{ background: "#162035" }}
+          >
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+              <path
+                d="M14 2L24 7V14C24 20 19.5 24.5 14 25.5C8.5 24.5 4 20 4 14V7L14 2Z"
+                stroke="#3b82f6"
+                strokeWidth="1.8"
+                fill="rgba(59,130,246,0.08)"
+              />
+              <path d="M10 14l3 3 5-6" stroke="#3b82f6" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <h3
+            className="text-base font-bold text-white mb-2"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Paste a message above to analyze it
+          </h3>
+          <p className="text-sm" style={{ color: "#526380" }}>
+            PhishShield detects emotional manipulation techniques in real-time — no technical knowledge required.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-6">
+            {["Urgency", "Fear", "Authority", "Greed", "Trust"].map((t) => (
+              <div
+                key={t}
+                className="px-3 py-1.5 rounded-full text-xs font-medium"
+                style={{ background: "#162035", color: "#7b90ad", border: "1px solid #1e2d47" }}
+              >
+                {t}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
