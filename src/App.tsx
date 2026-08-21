@@ -292,8 +292,8 @@ export default function App() {
               type="button"
               aria-label="Notifications"
               className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors @media (hover: hover) {
- .hover\:bg-\[\#162035\]\/60:hover {
- background-color: color-mix(in oklab, #162035 60%, transparent);
+ .hover\:bg-\[\#1e2d47\]:hover {
+ background-color: #1e2d47;
  }
 }"
               style={{ background: "#162035", color: "#7b90ad" }}
