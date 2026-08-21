@@ -47,15 +47,13 @@ export default function App() {
     >
       {/* Sidebar Desktop */}
       <aside
-        className="hidden lg:flex flex-col w-64 .flex-shrink-0 {
- flex-shrink: 0;
-} border-r"
+        className="hidden lg:flex flex-col w-64 flex-shrink-0 border-r"
         style={{
           background: "#060d1f",
           borderColor: "#162035",
         }}
       >
-        {/* Logo Gambar Otak Siber */}
+        {/* Logo Gambar Otak Siber Desktop */}
         <div className="px-5 py-5 border-b flex items-center justify-center" style={{ borderColor: "#162035" }}>
           <img 
             src={logoImg} 
@@ -73,11 +71,7 @@ export default function App() {
                 key={item.id}
                 type="button"
                 onClick={() => setActive(item.id)}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-150 @media (hover: hover) {
- .hover\:bg-\[\#162035\]\/60:hover {
- background-color: color-mix(in oklab, #162035 60%, transparent);
- }
-}"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-150 hover:bg-[#162035]/60"
                 style={{
                   background: isActive ? "#162035" : "transparent",
                   borderLeft: isActive
@@ -120,11 +114,7 @@ export default function App() {
           <button
             type="button"
             onClick={() => setActive("settings")}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-150 @media (hover: hover) {
- .hover\:bg-\[\#162035\]\/60:hover {
- background-color: color-mix(in oklab, #162035 60%, transparent);
- }
-}"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-150 hover:bg-[#162035]/60"
             style={{
               background: active === "settings" ? "#162035" : "transparent",
               borderLeft:
@@ -159,9 +149,7 @@ export default function App() {
           >
             <div className="flex items-center gap-3 min-w-0">
               <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white .flex-shrink-0 {
- flex-shrink: 0;
-}"
+                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
                 style={{ background: "#1d4ed8" }}
               >
                 AR
@@ -192,9 +180,7 @@ export default function App() {
       <main className="flex-1 flex flex-col h-full overflow-hidden">
         {/* Top Header */}
         <header
-          className="flex items-center justify-between px-4 lg:px-8 py-3 lg:py-4 border-b .flex-shrink-0 {
- flex-shrink: 0;
-}"
+          className="flex items-center justify-between px-4 lg:px-8 py-3 lg:py-4 border-b flex-shrink-0"
           style={{ borderColor: "#162035", background: "#060d1f" }}
         >
           <div className="flex items-center gap-3">
@@ -250,11 +236,7 @@ export default function App() {
             <button
               type="button"
               aria-label="Notifications"
-              className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors @media (hover: hover) {
- .hover\:bg-\[\#162035\]\/60:hover {
- background-color: color-mix(in oklab, #162035 60%, transparent);
- }
-}"
+              className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors hover:bg-[#162035]/60"
               style={{ background: "#162035", color: "#7b90ad" }}
             >
               <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">

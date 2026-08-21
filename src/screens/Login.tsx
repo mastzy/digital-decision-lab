@@ -70,7 +70,7 @@ export default function Login({ onLogin }: LoginProps) {
         />
 
         <div className="relative flex flex-col h-full px-12 py-10">
-          {/* Logo Resmi */}
+          {/* Logo Resmi Desktop */}
           <div className="flex items-center gap-3">
             <img
               src={logoImg}
