@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import logoImg from "./assets/logo.png";
 import Login from "./screens/Login";
 import Dashboard from "./screens/Dashboard";
 import PhishSim from "./screens/PhishSim";
@@ -55,55 +56,12 @@ export default function App() {
         }}
       >
         {/* Logo */}
-        <div className="px-6 py-6 border-b" style={{ borderColor: "#162035" }}>
-          <div className="flex items-center gap-3">
-            <div
-              className="w-9 h-9 rounded-lg flex items-center justify-center .flex-shrink-0 {
- flex-shrink: 0;
-}"
-              style={{ background: "#3b82f6" }}
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 18 18"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M9 1L16 4.5V9C16 13 12.5 16.5 9 17C5.5 16.5 2 13 2 9V4.5L9 1Z"
-                  fill="white"
-                  fillOpacity="0.15"
-                  stroke="white"
-                  strokeWidth="1.5"
-                />
-                <path
-                  d="M6 9L8 11L12 7"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <div>
-              <div
-                className="text-sm font-bold leading-tight text-white"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                Digital Decision
-              </div>
-              <div
-                className="text-xs font-semibold leading-tight"
-                style={{
-                  color: "#3b82f6",
-                  fontFamily: "var(--font-display)",
-                }}
-              >
-                Lab
-              </div>
-            </div>
-          </div>
+        <div className="px-5 py-5 border-b flex items-center justify-center" style={{ borderColor: "#162035" }}>
+          <img 
+            src={logoImg} 
+            alt="Digital Decision Lab Logo" 
+            className="h-10 w-auto object-contain"
+          />
         </div>
 
         {/* Navigation */}
@@ -240,9 +198,13 @@ export default function App() {
           style={{ borderColor: "#162035", background: "#060d1f" }}
         >
           <div className="flex items-center gap-3">
-            {/* Logo Singkat Mobile */}
-            <div className="lg:hidden w-7 h-7 rounded-md flex items-center justify-center bg-blue-600">
-              <span className="text-xs font-bold text-white">D</span>
+            {/* Logo Mobile */}
+            <div className="lg:hidden flex items-center">
+              <img 
+                src={logoImg} 
+                alt="Digital Decision Lab Logo" 
+                className="h-7 w-auto object-contain"
+              />
             </div>
             <div>
               <h1
@@ -292,8 +254,8 @@ export default function App() {
               type="button"
               aria-label="Notifications"
               className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors @media (hover: hover) {
- .hover\:bg-\[\#1e2d47\]:hover {
- background-color: #1e2d47;
+ .hover\:bg-\[\#162035\]\/60:hover {
+ background-color: color-mix(in oklab, #162035 60%, transparent);
  }
 }"
               style={{ background: "#162035", color: "#7b90ad" }}
@@ -321,7 +283,7 @@ export default function App() {
         </div>
       </main>
 
-      {/* Bottom Navigation Bar Mobile (Hanya Tampil pada Layar HP) */}
+      {/* Bottom Navigation Bar Mobile */}
       <nav
         className="lg:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around py-2 px-2 border-t backdrop-blur-lg"
         style={{ background: "rgba(6, 13, 31, 0.95)", borderColor: "#162035" }}
